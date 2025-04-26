@@ -40,7 +40,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Recipe.objects.filter(user=self.request.user)
+        queryset = Recipe.objects.filter(user=self.request.user)
+        category_id = self.request.query_params.get('category', None)
+        if category_id:
+            queryset = queryset.filter(category_id=category_id) 
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
