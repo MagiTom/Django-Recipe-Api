@@ -3,6 +3,7 @@ from users.models import CustomUser
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='category_images/', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -14,6 +15,7 @@ class Recipe(models.Model):
     ingredients = models.TextField()
     instructions = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    image = models.ImageField(upload_to='recipe_images/', null=True, blank=True)  # New field
 
     def __str__(self):
         return self.title
