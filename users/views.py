@@ -2,11 +2,10 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from .models import CustomUser
 from .serializers import RegisterSerializer
-
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -27,3 +26,14 @@ class RegisterView(generics.CreateAPIView):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }, status=status.HTTP_201_CREATED)
+        
+class UserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+        })

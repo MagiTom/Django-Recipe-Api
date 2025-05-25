@@ -4,6 +4,7 @@ from .serializers import RecipeSerializer, CategorySerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import PermissionDenied, NotFound
+from rest_framework.pagination import PageNumberPagination
 
 @api_view(['GET'])
 def test_view(request):
@@ -13,6 +14,24 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        obj = super().get_object()
+        if obj.user != self.request.user:
+            raise PermissionDenied("Nie masz dostępu do tej kategorii.")
+        return obj
+    
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_object(self):
+        obj = super().get_object()
+        if obj.user != self.request.user:
+            raise PermissionDenied("Nie masz dostępu do tej kategorii.")
+        return obj
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -34,17 +53,34 @@ class CategoryViewSet(viewsets.ModelViewSet):
             "message": "Kategoria została usunięta."
         }, status=status.HTTP_204_NO_CONTENT)
 
+class RecipePagination(PageNumberPagination):
+    page_size = 10
 
 class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = RecipePagination
 
     def get_queryset(self):
         queryset = Recipe.objects.filter(user=self.request.user)
-        category_id = self.request.query_params.get('category', None)
-        if category_id:
-            queryset = queryset.filter(category_id=category_id)
+        
+        if self.request.query_params.get('favourite') == 'true':
+           queryset = queryset.filter(favourite=True)
+
+        category = self.request.query_params.get('category')
+        try:
+            if category is not None:
+                category_id = int(category)
+                queryset = queryset.filter(category_id=category_id)
+        except (TypeError, ValueError):
+            pass
+
+        title_query = self.request.query_params.get('title')
+        if title_query:
+            queryset = queryset.filter(title__icontains=title_query)
+
         return queryset
+
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
