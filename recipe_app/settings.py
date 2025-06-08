@@ -75,6 +75,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "recipe_app.wsgi.application"
 
+AUTHENTICATION_BACKENDS = [
+    'users.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend', 
+]
+
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

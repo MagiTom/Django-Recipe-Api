@@ -21,6 +21,13 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser  # lub get_user_model()
 
+from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate
+
+User = get_user_model()
+
 class CustomTokenObtainPairSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -45,3 +52,4 @@ class CustomTokenObtainPairSerializer(serializers.Serializer):
                 "email": user.email,
             }
         }
+
