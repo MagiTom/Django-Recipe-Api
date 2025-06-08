@@ -3,9 +3,9 @@ from .models import Recipe, Category
 from .serializers import RecipeSerializer, CategorySerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import PermissionDenied, NotFound
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import PageNumberPagination
-
+from rest_framework.parsers import MultiPartParser, FormParser
 
 @api_view(["GET"])
 def test_view(request):
@@ -61,6 +61,7 @@ class RecipePagination(PageNumberPagination):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    parser_classes = [MultiPartParser, FormParser]
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = RecipePagination
