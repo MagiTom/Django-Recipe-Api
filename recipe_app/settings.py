@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     "recipes",
     "users",
     "corsheaders",
-    "storages"
+    "storages",
+    "supabase"
 ]
 
 REST_FRAMEWORK = {
