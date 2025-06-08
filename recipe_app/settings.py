@@ -18,7 +18,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 AUTH_USER_MODEL = 'recipe_app.CustomUser' 
-
+DEFAULT_FILE_STORAGE = "recipe_app.storage_backends.SupabaseMediaStorage"
 # Application definition
 
 INSTALLED_APPS = [
@@ -164,14 +164,23 @@ import os
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 # MEDIA – Supabase Storage via S3-compatible endpoint
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# Media files (images, etc.)
+# Supabase Storage via S3-compatible API
 
-AWS_ACCESS_KEY_ID = os.environ.get("SUPABASE_ACCESS_KEY")
+
+AWS_ACCESS_KEY_ID = "unused"
 AWS_SECRET_ACCESS_KEY = os.environ.get("SUPABASE_SECRET_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("SUPABASE_BUCKET_NAME")
-AWS_S3_ENDPOINT_URL = f"{os.environ.get('SUPABASE_ENDPOINT')}/storage/v1"
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.{os.environ.get('SUPABASE_ENDPOINT').replace('https://', '')}"
-AWS_QUERYSTRING_AUTH = False
+AWS_S3_ENDPOINT_URL = os.environ.get("SUPABASE_ENDPOINT")
 
-MEDIA_URL = "https://ggzdddsoqbgzvcnytdeu.supabase.co/storage/v1/object/public/media/"
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_ADDRESSING_STYLE = "path"
+
+MEDIA_URL = f"{os.environ.get('SUPABASE_ENDPOINT')}/storage/v1/object/public/{os.environ.get('SUPABASE_BUCKET_NAME')}/"
+
+from recipe_app.storage_backends import SupabaseMediaStorage
+from django.core.files.storage import default_storage
+default_storage._wrapped = SupabaseMediaStorage()
+
+
 
