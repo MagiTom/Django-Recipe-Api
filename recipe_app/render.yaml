@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: django-recipe-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn recipe_app.wsgi --log-file -
+    envVars:
+      - key: SECRET_KEY
+        value: $1-mvmyt4d*6ng4pz+e!-v^&mv5&*_m(6_ak%bmx)9mz$%!hpo
+      - key: DEBUG
+        value: false
+      - key: DATABASE_URL
+        value: postgresql://postgres:Magi89Tom89!@db.ggzdddsoqbgzvcnytdeu.supabase.co:5432/postgres
+      - key: DJANGO_SETTINGS_MODULE
+        value: recipe_app.settings
+      - key: ALLOWED_HOSTS
+        value: django-recipe-api.onrender.com
