@@ -11,7 +11,7 @@ services:
       - key: DEBUG
         value: false
       - key: DATABASE_URL
-        value: postgresql://postgres:Magi89Tom89!@db.ggzdddsoqbgzvcnytdeu.supabase.co:5432/postgres
+        value: postgresql://postgres.ggzdddsoqbgzvcnytdeu:Madlen89Tom%21@aws-0-eu-north-1.pooler.supabase.com:6543/postgres
       - key: DJANGO_SETTINGS_MODULE
         value: recipe_app.settings
       - key: ALLOWED_HOSTS
