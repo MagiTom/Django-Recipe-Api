@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "recipes",
     "users",
     "corsheaders",
+    "storages"
 ]
 
 REST_FRAMEWORK = {
@@ -162,3 +163,14 @@ import os
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA – Supabase Storage via S3-compatible endpoint
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+AWS_ACCESS_KEY_ID = os.environ.get("SUPABASE_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = os.environ.get("SUPABASE_SECRET_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("SUPABASE_BUCKET_NAME")
+AWS_S3_ENDPOINT_URL = f"{os.environ.get('SUPABASE_ENDPOINT')}/storage/v1"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.{os.environ.get('SUPABASE_ENDPOINT').replace('https://', '')}"
+AWS_QUERYSTRING_AUTH = False
+
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
