@@ -9,7 +9,7 @@ services:
       - key: SECRET_KEY
         value: $1-mvmyt4d*6ng4pz+e!-v^&mv5&*_m(6_ak%bmx)9mz$%!hpo
       - key: DEBUG
-        value: false
+        value: true
       - key: DATABASE_URL
         value: "postgresql://postgres.ggzdddsoqbgzvcnytdeu:Madlen89Tom%21@aws-0-eu-north-1.pooler.supabase.com:6543/postgres"
       - key: DJANGO_SETTINGS_MODULE
