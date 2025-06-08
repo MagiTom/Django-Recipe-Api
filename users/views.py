@@ -6,6 +6,7 @@ from .models import CustomUser
 from .serializers import RegisterSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from .serializers import CustomTokenObtainPairSerializer
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -37,3 +38,10 @@ class UserView(APIView):
             "username": user.username,
             "email": user.email,
         })
+        
+class CustomLoginView(APIView):
+    def post(self, request):
+        serializer = CustomTokenObtainPairSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
