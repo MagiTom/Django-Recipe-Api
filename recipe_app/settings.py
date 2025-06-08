@@ -173,4 +173,5 @@ AWS_S3_ENDPOINT_URL = f"{os.environ.get('SUPABASE_ENDPOINT')}/storage/v1"
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.{os.environ.get('SUPABASE_ENDPOINT').replace('https://', '')}"
 AWS_QUERYSTRING_AUTH = False
 
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+MEDIA_URL = "https://ggzdddsoqbgzvcnytdeu.supabase.co/storage/v1/object/public/media/"
+
