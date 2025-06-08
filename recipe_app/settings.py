@@ -97,6 +97,12 @@ ALLOWED_HOSTS = [
     "localhost",
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8100",
+    "http://127.0.0.1:8100",
+    "https://django-recipe-api.onrender.com",
+]
+
 DATABASES = {
     "default": dj_database_url.config(
         default=os.environ.get("DATABASE_URL"), conn_max_age=600
