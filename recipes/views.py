@@ -88,7 +88,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
+     try:
         serializer.save(user=self.request.user)
+     except Exception as e:
+        import logging
+        logging.getLogger(__name__).exception("Błąd przy zapisie kategorii")
+        raise e
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
