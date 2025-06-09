@@ -6,6 +6,10 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 @api_view(["GET"])
 def test_view(request):
@@ -16,25 +20,19 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser] 
-
-    def get_object(self):
-        obj = super().get_object()
-        if obj.user != self.request.user:
-            raise PermissionDenied("Nie masz dostępu do tej kategorii.")
-        return obj
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         return Category.objects.filter(user=self.request.user)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     def get_object(self):
         obj = super().get_object()
         if obj.user != self.request.user:
             raise PermissionDenied("Nie masz dostępu do tej kategorii.")
         return obj
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -44,6 +42,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        image_data = request.data.get("image")
+        if image_data in [None, "", "null"]:
+            if instance.image:
+                instance.image.delete(save=False)
+                instance.image = None
+                instance.save(update_fields=["image"])
+
         response = super().update(request, *args, **kwargs)
         return Response(
             {"message": "Kategoria została zaktualizowana!", "data": response.data}
@@ -88,12 +95,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-     try:
-        serializer.save(user=self.request.user)
-     except Exception as e:
-        import logging
-        logging.getLogger(__name__).exception("Błąd przy zapisie kategorii")
-        raise e
+        try:
+            serializer.save(user=self.request.user)
+        except Exception as e:
+            logger.exception("Błąd przy zapisie przepisu")
+            raise e
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -104,8 +110,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+
         if instance.user != request.user:
             raise PermissionDenied("Nie masz uprawnień do edycji tego przepisu.")
+
+        image_data = request.data.get("image")
+        if image_data in [None, "", "null"]:
+            if instance.image:
+                instance.image.delete(save=False)
+                instance.image = None
+                instance.save(update_fields=["image"])
+
         response = super().update(request, *args, **kwargs)
         return Response(
             {"message": "Przepis został zaktualizowany!", "data": response.data}
@@ -117,5 +132,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Nie masz uprawnień do usunięcia tego przepisu.")
         self.perform_destroy(instance)
         return Response(
-            {"message": "Przepis został usunięty."}, status=status.HTTP_204_NO_CONTENT
+            {"message": "Przepis został usunięty."},
+            status=status.HTTP_204_NO_CONTENT,
         )

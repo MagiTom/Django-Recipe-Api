@@ -37,3 +37,11 @@ class SupabaseMediaStorage(S3Boto3Storage):
         )
 
         return name
+    
+    def delete(self, name):
+         try:
+             self.client.storage.from_(self.bucket_name).remove([name])
+         except Exception as e:
+              import logging
+              logging.getLogger(__name__).exception(f"Błąd przy usuwaniu pliku: {name}")
+
