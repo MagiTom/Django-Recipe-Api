@@ -8,7 +8,7 @@ class SupabaseMediaStorage(S3Boto3Storage):
     access_key = "unused"
     secret_key = os.environ.get("SUPABASE_SECRET_KEY")
     endpoint_url = os.environ.get("SUPABASE_URL") + "/storage/v1/s3"
-    custom_domain = f"{os.environ.get('SUPABASE_URL')}/storage/v1/object/public/{bucket_name}"
+    custom_domain = f"{os.environ.get('DOMAIN')}/storage/v1/object/public/{bucket_name}"
     querystring_auth = False
     addressing_style = "path"
 
