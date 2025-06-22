@@ -2,6 +2,7 @@ import mimetypes
 from storages.backends.s3boto3 import S3Boto3Storage
 from supabase import create_client
 import os
+import hashlib
 
 class SupabaseMediaStorage(S3Boto3Storage):
     bucket_name = os.environ.get("SUPABASE_BUCKET_NAME")
@@ -21,6 +22,13 @@ class SupabaseMediaStorage(S3Boto3Storage):
 
     def exists(self, name):
         return False
+    
+    def _generate_safe_filename(self, name):
+         _, ext = os.path.splitext(name)
+         ext = ext.lower() or ".jpg"
+         hash_part = hashlib.sha256(f"{name}-{time.time()}".encode()).hexdigest()[:16]
+         
+         return f"{hash_part}{ext}"
 
     def _save(self, name, content):
         data = content.read()
