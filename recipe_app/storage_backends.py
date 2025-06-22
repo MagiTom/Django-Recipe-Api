@@ -24,12 +24,10 @@ class SupabaseMediaStorage(S3Boto3Storage):
 
     def _save(self, name, content):
         data = content.read()
-
-        # Determine MIME type (default to octet-stream)
+        name = self._generate_safe_filename(name)
         content_type, _ = mimetypes.guess_type(name)
         content_type = content_type or "application/octet-stream"
 
-        # Upload via Supabase client
         self.client.storage.from_(self.bucket_name).upload(
             name,
             data,
