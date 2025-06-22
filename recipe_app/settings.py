@@ -177,7 +177,7 @@ AWS_S3_ENDPOINT_URL = os.environ.get("SUPABASE_ENDPOINT")
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_ADDRESSING_STYLE = "path"
 
-MEDIA_URL = f"{os.environ.get('SUPABASE_ENDPOINT')}/storage/v1/object/public/{os.environ.get('SUPABASE_BUCKET_NAME')}/"
+MEDIA_URL = f"{os.environ.get('SUPABASE_URL')}/storage/v1/object/public/{os.environ.get('SUPABASE_BUCKET_NAME')}/"
 
 from recipe_app.storage_backends import SupabaseMediaStorage
 from django.core.files.storage import default_storage
